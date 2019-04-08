@@ -29,7 +29,7 @@ class EmailsTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->withoutExceptionHandling()
-            ->post('/send', ['_recipient' => 'not_allowed@formgate.dev', 'message' => 'Hello world!']);
+            ->post('/send', ['_recipient' => 'not_allowed@formgate.dev']);
         $this->assertNoMailSent();
     }
 
@@ -44,8 +44,8 @@ class EmailsTest extends TestCase
     {
         $this->post('/send', ['_recipient' => 'test@formgate.dev', '_sender_email' => 'invalid email']);
         $this->assertMailSent();
-        $this->assertArrayHasKey(config('mail.from.address'), $this->getLastEmail()->getFrom());
-        $this->assertArrayNotHasKey('invalid email', $this->getLastEmail()->getFrom());
-
+        $lastEmail = $this->getLastEmail();
+        $this->assertArrayHasKey(config('mail.from.address'), $lastEmail->getFrom());
+        $this->assertArrayNotHasKey('invalid email', $lastEmail->getFrom());
     }
 }
