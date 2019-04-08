@@ -12,13 +12,11 @@ class EmailsTest extends TestCase
      *
      * @return void
      */
-    public function test_simple_email_is_sent()
+    public function test_simple_email_is_sent(): void
     {
         $this->post('/send', ['_recipient' => 'test@formgate.dev', 'Message' => 'Hello world!'])
             ->assertRedirect('/thanks');
         $this->assertEmailSent();
-
-
     }
 
     /**
@@ -28,7 +26,7 @@ class EmailsTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @return void
      */
-    public function test_email_not_on_allowed_list_fails()
+    public function test_email_not_on_allowed_list_fails(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->withoutExceptionHandling()
