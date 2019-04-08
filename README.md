@@ -21,10 +21,10 @@ Send a POST request to `https://forms.yourdomain.com/send` with the following pa
 | Name | Value |
 | ------------- | ------------- |
 | _recipient | The recipient email address for this contact form. |
+| _redirect_success | The URL to redirect to after a successful form submission. (optional) |
 | _sender_name | The sender name for this contact form. (optional) |
 | _sender_email | The sender email address for this contact form. (optional) |
 | _subject | The subject line for this contact form. (optional) |
-| _redirect_success | The URL to redirect to after a successful form submission. (optional) |
 
 **Important:** The `_recipient` must be added to the allow list in your `.env` file to be valid.
 
