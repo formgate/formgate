@@ -38,9 +38,15 @@ class SendController extends Controller
      */
     public function handle()
     {
+        try {
+            $this->mailer->setSenderName(request('_sender_name'));
+            $this->mailer->setSenderEmail(request('_sender_email'));
+        } catch (\InvalidArgumentException $e) {
+            // For now, there's no way to handle end user errors but any data should still be submitted.
+            // To ensure a valid sender email is set, use <input type="email"> in your form.
+        }
+
         $this->mailer->setRecipient(request('_recipient'));
-        $this->mailer->setSenderName(request('_sender_name'));
-        $this->mailer->setSenderEmail(request('_sender_email'));
         $this->mailer->setSubject(request('_subject', 'Contact form submission'));
         $this->mailer->setFields($this->getFields());
         $this->mailer->send();

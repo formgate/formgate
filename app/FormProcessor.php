@@ -84,6 +84,10 @@ class FormProcessor
      */
     public function setSenderEmail(?string $sender_email): void
     {
+        if (!filter_var($sender_email, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException('The $sender_email must be a valid email address.');
+        }
+
         $this->sender_email = $sender_email;
     }
 
