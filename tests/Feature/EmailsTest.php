@@ -16,7 +16,7 @@ class EmailsTest extends TestCase
     {
         $this->post('/send', ['_recipient' => 'test@formgate.dev', 'Message' => 'Hello world!'])
             ->assertRedirect('/thanks');
-        $this->assertEmailSent();
+        $this->assertMailSent();
     }
 
     /**
@@ -30,6 +30,22 @@ class EmailsTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->withoutExceptionHandling()
             ->post('/send', ['_recipient' => 'not_allowed@formgate.dev', 'message' => 'Hello world!']);
-        $this->assertNoEmailSent();
+        $this->assertNoMailSent();
+    }
+
+    /**
+     * Test that when an invalid sender email is passed through then it is
+     * overwritten with the config mail from address value and the email
+     * sends successfully.
+     *
+     * @return void
+     */
+    public function test_invalid_sender_email_gets_overwritten(): void
+    {
+        $this->post('/send', ['_recipient' => 'test@formgate.dev', '_sender_email' => 'invalid email']);
+        $this->assertMailSent();
+        $this->assertArrayHasKey(config('mail.from.address'), $this->getLastEmail()->getFrom());
+        $this->assertArrayNotHasKey('invalid email', $this->getLastEmail()->getFrom());
+
     }
 }
