@@ -23,6 +23,7 @@ Send a POST request to `https://forms.yourdomain.com/send` with the following pa
 | _recipient | The recipient email address for this contact form. |
 | _sender_name | The sender name for this contact form. (optional) |
 | _sender_email | The sender email address for this contact form. (optional) |
+| _subject | The subject line for this contact form. (optional) |
 | _redirect_success | The URL to redirect to after a successful form submission. (optional) |
 
 **Important:** The `_recipient` must be added to the allow list in your `.env` file to be valid.
@@ -37,6 +38,7 @@ Example form:
   <input type="hidden" name="_redirect_success" value="https://clientwebsite.com/success/">
   <input type="text" name="_sender_name">
   <input type="email" name="_sender_email">
+  <input type="text" name="_subject">
   <textarea name="message"></textarea>
   <input type="submit" value="Send">
 </form>
