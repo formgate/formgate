@@ -55,7 +55,7 @@ class FormProcessor
      */
     private function getAllowList(): array
     {
-        $list = getenv('RECIPIENT_ALLOW_LIST');
+        $list = config('formgate.allowed_recipients');
         return empty($list) ? [] : explode(',', $list);
     }
 
