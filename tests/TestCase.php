@@ -17,7 +17,6 @@ abstract class TestCase extends BaseTestCase
 
     protected function assertEmailSent(): void
     {
-        /** @var \Illuminate\Foundation\Application $this ->app */
         $emails = Application::getInstance()->make('swift.transport')->driver()->messages();
         $this->assertCount(1, $emails);
     }
