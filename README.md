@@ -10,9 +10,7 @@ Formgate is a self-hosted solution for handling contact forms on your static web
 
 1. Host this repo on your web server (e.g. forms.yourdomain.com), ensuring the `public` directory is configured as your document root.
 2. Run `composer install` to download dependencies.
-3. Configure the `.env` file with the following:
-    1. Your SMTP credentials for sending emails.
-    2. Your recipient email address allow list.
+3. Copy `.env.example` to `.env` and configure.
 
 # Usage
 
