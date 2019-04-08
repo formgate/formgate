@@ -23,7 +23,6 @@ class EmailsTest extends TestCase
      * Test that an InvalidArgumentException is thrown and no email is sent
      * when an email not in the allowed env list is used.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function test_email_not_on_allowed_list_fails(): void
