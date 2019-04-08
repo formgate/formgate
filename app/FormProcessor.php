@@ -55,7 +55,7 @@ class FormProcessor
      */
     private function getAllowList(): array
     {
-        $list = getenv('RECIPIENT_ALLOW_LIST');
+        $list = env('RECIPIENT_ALLOW_LIST');
         return empty($list) ? [] : explode(',', $list);
     }
 
