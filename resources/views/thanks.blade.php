@@ -8,14 +8,17 @@
             font-size: 15px;
             color: #303030;
         }
+
         body {
             padding: 25px;
             text-align: center;
         }
+
         h1 {
             font-size: 1.4em;
             margin: 20px;
         }
+
         p {
             margin: 10px;
         }

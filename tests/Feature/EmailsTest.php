@@ -3,20 +3,36 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class EmailsTest extends TestCase
 {
     /**
-     * A basic feature test example.
+     * Test that a simple email is sent when a post request is made
+     * to the /send url.
      *
      * @return void
      */
-    public function testExample()
+    public function test_simple_email_is_sent()
     {
-        $response = $this->get('/');
+        $this->post('/send', ['_recipient' => 'test@formgate.dev', 'Message' => 'Hello world!'])
+            ->assertRedirect('/thanks');
+        $this->assertEmailSent();
 
-        $response->assertStatus(200);
+
+    }
+
+    /**
+     * Test that an InvalidArgumentException is thrown and no email is sent
+     * when an email not in the allowed env list is used.
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function test_email_not_on_allowed_list_fails()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->withoutExceptionHandling()
+            ->post('/send', ['_recipient' => 'not_allowed@formgate.dev', 'message' => 'Hello world!']);
+        $this->assertNoEmailSent();
     }
 }
