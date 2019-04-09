@@ -30,6 +30,7 @@ class SendController extends Controller
             '_sender_email',
             '_subject',
             '_redirect_success',
+            '_hp_email',
         ]);
     }
 
@@ -38,6 +39,8 @@ class SendController extends Controller
      */
     public function handle()
     {
+        abort_if(!empty(request('_hp_email')), 422); // Abort the request if there is a filled in _hp_email field
+
         try {
             $this->mailer->setSenderName(request('_sender_name'));
             $this->mailer->setSenderEmail(request('_sender_email'));
