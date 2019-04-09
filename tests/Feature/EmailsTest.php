@@ -30,7 +30,7 @@ class EmailsTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->withoutExceptionHandling()
-            ->post(' / send', ['_recipient' => 'not_allowed@formgate . dev']);
+            ->post(' / send', ['_recipient' => 'not_allowed@formgate.dev']);
         $this->assertNoMailSent();
     }
 
@@ -43,10 +43,21 @@ class EmailsTest extends TestCase
      */
     public function test_invalid_sender_email_gets_overwritten(): void
     {
-        $this->post(' / send', ['_recipient' => 'test@formgate . dev', '_sender_email' => 'invalid email']);
+        $this->post(' / send', ['_recipient' => 'test@formgate.dev', '_sender_email' => 'invalid email']);
         $this->assertMailSent();
         $lastEmail = $this->getLastEmail();
-        $this->assertArrayHasKey(config('mail . from . address'), $lastEmail->getFrom());
+        $this->assertArrayHasKey(config('mail.from.address'), $lastEmail->getFrom());
         $this->assertArrayNotHasKey('invalid email', $lastEmail->getFrom());
+    }
+
+    /**
+     * Test that if a field name with `_hp_email` is filled in that the
+     * form submission is discarded as spam.
+     *
+     * @return void
+     */
+    public function test_honeypot_field_filled_in_rejects_submission()
+    {
+        $this->post(' / send', ['_hp_email' => 'test@formgate . dev', '_sender_email' => 'invalid email']);
     }
 }
