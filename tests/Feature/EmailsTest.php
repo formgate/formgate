@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use InvalidArgumentException;
 use Tests\TestCase;
 
 class EmailsTest extends TestCase
@@ -28,7 +29,7 @@ class EmailsTest extends TestCase
      */
     public function test_email_not_on_allowed_list_fails(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->withoutExceptionHandling()
             ->post('/send', ['_recipient' => 'not_allowed@formgate.dev']);
         $this->assertNoMailSent();
@@ -60,5 +61,6 @@ class EmailsTest extends TestCase
     {
         $this->post('/send', ['_hp_email' => 'test@formgate.dev'])
             ->assertStatus(422);
+        $this->assertNoMailSent();
     }
 }
