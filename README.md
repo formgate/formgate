@@ -1,5 +1,9 @@
 Formgate is a self-hosted solution for handling contact forms on your static websites. You just need to host a single instance of Formgate to handle the contact forms for all of your static websites.
 
+Master: [![Build Status](https://travis-ci.org/formgate/formgate.svg?branch=master)](https://travis-ci.org/formgate/formgate)
+
+Develop: [![Build Status](https://api.travis-ci.org/formgate/formgate.svg?branch=develop)](https://travis-ci.org/formgate/formgate)
+
 # Requirements
 
 * PHP 7.2
