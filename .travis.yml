@@ -1,0 +1,15 @@
+language: php
+
+php:
+    - '7.1'
+    - '7.2'
+    - '7.3'
+
+install:
+    - travis_retry composer install --no-interaction
+
+before_script:
+    - composer install
+    - php artisan key:generate
+
+script: vendor/bin/phpunit --configuration phpunit.xml
