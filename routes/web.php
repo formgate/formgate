@@ -16,4 +16,5 @@ Route::get('/', function () {
 });
 
 Route::post('send', 'SendController@handle');
+Route::post('submit', 'SendController@recaptcha');
 Route::view('thanks', 'thanks');

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\FormProcessor;
+use App\ReCaptchaValidator;
+use InvalidArgumentException;
 
 class SendController extends Controller
 {
@@ -31,20 +33,47 @@ class SendController extends Controller
             '_subject',
             '_redirect_success',
             '_hp_email',
+            '_token',
+            'g-recaptcha-response'
         ]);
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\Response
      */
     public function handle()
     {
         abort_if(!empty(request('_hp_email')), 422); // Abort the request if there is a filled in _hp_email field
 
+        // If recaptcha is disabled we can just offload to the submit method
+        if (!config('formgate.recaptcha.enabled')) {
+            return $this->submit();
+        }
+
+        // Otherwise we show the recaptcha form page and pass along all the request values
+        return view('recaptcha', ['request' => request()->all()]);
+    }
+
+    /**
+     * @return \Illuminate\Http\Response
+     */
+    public function recaptcha()
+    {
+        if (!ReCaptchaValidator::isValid(request('g-recaptcha-response'))) {
+            // if recaptcha is response is not valid we show the recaptcha view again with an error
+            return view('recaptcha', ['request' => request()->all(), 'captcha_error' => true]);
+        }
+
+        // If recaptcha passes we can offload to the submit method
+        return $this->submit();
+    }
+
+    private function submit()
+    {
         try {
             $this->mailer->setSenderName(request('_sender_name'));
             $this->mailer->setSenderEmail(request('_sender_email'));
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             // For now, there's no way to handle end user errors but any data should still be submitted.
             // To ensure a valid sender email is set, use <input type="email"> in your form.
         }

@@ -34,5 +34,6 @@
         <server name="MAIL_FROM_NAME" value="Formgate"/>
         <server name="MAIL_FROM_ADDRESS" value="contact@formgate.dev"/>
         <server name="RECIPIENT_ALLOW_LIST" value="test@formgate.dev"/>
+        <server name="GOOGLE_RECAPTCHA_ENABLED" value="false"/>
     </php>
 </phpunit>
