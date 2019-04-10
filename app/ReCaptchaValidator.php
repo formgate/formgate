@@ -7,6 +7,14 @@ use GuzzleHttp\Client;
 
 class ReCaptchaValidator
 {
+    /**
+     * Check the response with Google Recaptcha
+     * to return whether the recaptcha was completed
+     * successfully or not.
+     *
+     * @param $response
+     * @return boolean
+     */
     public static function isValid($response)
     {
         // Validate ReCaptcha

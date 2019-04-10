@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\FormProcessor;
 use App\ReCaptchaValidator;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
 use InvalidArgumentException;
 
 class SendController extends Controller
@@ -39,7 +41,7 @@ class SendController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse|Redirector
      */
     public function handle()
     {
@@ -55,7 +57,7 @@ class SendController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse|Redirector
      */
     public function recaptcha()
     {
@@ -68,6 +70,9 @@ class SendController extends Controller
         return $this->submit();
     }
 
+    /**
+     * @return RedirectResponse|Redirector
+     */
     private function submit()
     {
         try {
