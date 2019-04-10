@@ -55,7 +55,9 @@ class SendController extends Controller
         // If there is a recaptcha response in the request verify it and if correct process the submission
         if (request()->has('g-recaptcha-response')) {
             $captcha_error = true;
-            if (ReCaptchaValidator::isValid(request('g-recaptcha-response'))) {
+            $recaptcha = new \ReCaptcha\ReCaptcha(config('formgate.recaptcha.secret_key'));
+            $response = $recaptcha->verify(request('g-recaptcha-response'), request()->getClientIp());
+            if ($response->isSuccess()) {
                 return $this->submit();
             }
         }
