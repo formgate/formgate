@@ -52,22 +52,16 @@ class SendController extends Controller
             return $this->submit();
         }
 
-        // Otherwise we show the recaptcha form page and pass along all the request values
-        return view('recaptcha', ['request' => request()->all()]);
-    }
-
-    /**
-     * @return RedirectResponse|Redirector
-     */
-    public function recaptcha()
-    {
-        if (!ReCaptchaValidator::isValid(request('g-recaptcha-response'))) {
-            // if recaptcha is response is not valid we show the recaptcha view again with an error
-            return view('recaptcha', ['request' => request()->all(), 'captcha_error' => true]);
+        // If there is a recaptcha response in the request verify it and if correct process the submission
+        if (request()->has('g-recaptcha-response')) {
+            $captcha_error = true;
+            if (ReCaptchaValidator::isValid(request('g-recaptcha-response'))) {
+                return $this->submit();
+            }
         }
 
-        // If recaptcha passes we can offload to the submit method
-        return $this->submit();
+        // If the recaptcha is enabled and it is not already in the request or it is invalid we show the recaptcha page
+        return view('recaptcha', ['request' => request()->all(), 'captcha_error' => $captcha_error ?? false]);
     }
 
     /**

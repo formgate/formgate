@@ -80,7 +80,8 @@ class EmailsTest extends TestCase
         $this->post('/send', $data)
             ->assertViewIs('recaptcha');
 
-        $this->post('/submit', $data)
+        $data['g-recaptcha-response'] = 'valid-code';
+        $this->post('/send', $data)
             ->assertRedirect('/thanks');
 
         $this->assertMailSent();
@@ -101,7 +102,7 @@ class EmailsTest extends TestCase
         $this->post('/send', $data)
             ->assertViewIs('recaptcha');
 
-        $this->post('/submit', $data)
+        $this->post('/send', $data)
             ->assertSee('You failed the robot check.');
 
         $this->assertNoMailSent();
