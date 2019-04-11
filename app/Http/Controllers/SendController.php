@@ -63,7 +63,10 @@ class SendController extends Controller
         }
 
         // If the recaptcha is enabled and it is not already in the request or it is invalid we show the recaptcha page
-        return view('recaptcha', ['request' => request()->all(), 'captcha_error' => $captcha_error ?? false]);
+        return view('recaptcha', [
+            'request' => request()->all(),
+            'captcha_error' => $captcha_error ?? false,
+        ]);
     }
 
     /**
