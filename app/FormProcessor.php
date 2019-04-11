@@ -56,6 +56,7 @@ class FormProcessor
     private function getAllowList(): array
     {
         $list = config('formgate.allowed_recipients');
+
         return empty($list) ? [] : explode(',', $list);
     }
 
@@ -64,7 +65,7 @@ class FormProcessor
      */
     public function setRecipient(string $recipient): void
     {
-        if (!in_array($recipient, $this->recipient_allow_list)) {
+        if (! in_array($recipient, $this->recipient_allow_list)) {
             throw new \InvalidArgumentException('The $recipient is not on the recipient allow list.');
         }
 
@@ -84,7 +85,7 @@ class FormProcessor
      */
     public function setSenderEmail(?string $sender_email): void
     {
-        if (!filter_var($sender_email, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($sender_email, FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException('The $sender_email must be a valid email address.');
         }
 
@@ -119,10 +120,10 @@ class FormProcessor
         ]), $this->fields);
 
         $message_fields = array_map(function ($value, $name) {
-            return $name . ':' . PHP_EOL . $value;
+            return $name.':'.PHP_EOL.$value;
         }, $fields, array_keys($fields));
 
-        return implode(PHP_EOL . PHP_EOL, $message_fields);
+        return implode(PHP_EOL.PHP_EOL, $message_fields);
     }
 
     /**
