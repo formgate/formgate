@@ -6,6 +6,7 @@ use App\FormProcessor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use InvalidArgumentException;
+use ReCaptcha\ReCaptcha;
 
 class SendController extends Controller
 {
@@ -54,7 +55,7 @@ class SendController extends Controller
         // If there is a recaptcha response in the request verify it and if correct process the submission
         if (request()->has('g-recaptcha-response')) {
             $captcha_error = true;
-            $recaptcha = new \ReCaptcha\ReCaptcha(config('formgate.recaptcha.secret_key'));
+            $recaptcha = new ReCaptcha(config('formgate.recaptcha.secret_key'));
             $response = $recaptcha->verify(request('g-recaptcha-response'), request()->getClientIp());
             if ($response->isSuccess()) {
                 return $this->submit();
