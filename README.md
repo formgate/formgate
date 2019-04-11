@@ -6,8 +6,8 @@ Develop: [![Build Status](https://api.travis-ci.org/formgate/formgate.svg?branch
 
 # Requirements
 
+* Apache (or other web server with appropriate rewrite rules configured)
 * PHP 7.2
-* Web server supporting PHP
 * Composer
 
 # Installation
