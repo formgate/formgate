@@ -88,23 +88,39 @@ class EmailsTest extends TestCase
     }
 
     /**
-     * Test invalid captcha doesn't submit the form
+     * Test recaptcha form is presented when enabled without email being sent
      */
-    public function test_invalid_captcha_doesnt_submit_form()
+    public function test_captcha_form_is_presented()
     {
-        $data = ['_recipient' => 'test@formgate.dev', 'Message' => 'Hello world!'];
+        Config::set('formgate.recaptcha.enabled', 'true');
 
+        $data = [
+            '_recipient' => 'test@formgate.dev',
+            'Message' => 'Hello world!',
+        ];
+
+        $this->post('/send', $data)->assertViewIs('recaptcha');
+        $this->assertNoMailSent();
+    }
+
+    /**
+     * Test invalid recaptcha submission informs user without email being sent
+     */
+    public function test_invalid_captcha_shows_error()
+    {
         // Setup test google recaptcha keys (these keys will always fail)
         Config::set('formgate.recaptcha.enabled', 'true');
         Config::set('formgate.recaptcha.site_key', 'invalid');
         Config::set('formgate.recaptcha.secret_key', 'invalid');
 
-        $this->post('/send', $data)
-            ->assertViewIs('recaptcha');
+        $data = [
+            '_token' => 'invalid',
+            '_recipient' => 'test@formgate.dev',
+            'Message' => 'Hello world!',
+        ];
 
-        $this->post('/send', $data)
-            ->assertSee('You failed the robot check.');
-
+        $this->post('/send', $data)->assertViewIs('recaptcha');
+        $this->post('/send', $data)->assertSee('You failed the robot check.');
         $this->assertNoMailSent();
     }
 }

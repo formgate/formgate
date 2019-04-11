@@ -5,7 +5,7 @@
 @section('body')
     <h1>Are you a robot?</h1>
 
-    @if($captcha_error)
+    @if(request('_token'))
         <p>
             <strong style="color: red;">You failed the robot check. Please try again.</strong>
         </p>

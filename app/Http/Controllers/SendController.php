@@ -43,6 +43,24 @@ class SendController extends Controller
     }
 
     /**
+     * @return bool
+     */
+    private function showRecaptchaForm(): bool
+    {
+        if (! config('formgate.recaptcha.enabled')) {
+            return false;
+        }
+
+        if (! request('g-recaptcha-response')) {
+            return true;
+        }
+
+        $recaptcha = new ReCaptcha(config('formgate.recaptcha.secret_key'));
+        $response = $recaptcha->verify(request('g-recaptcha-response'), request()->getClientIp());
+        return ! $response->isSuccess();
+    }
+
+    /**
      * @return RedirectResponse|Redirector
      */
     public function handle()
@@ -68,26 +86,13 @@ class SendController extends Controller
             $data['file'] = $path;
         }
 
-        // If recaptcha is disabled we can just offload to the submit method
-        if (!config('formgate.recaptcha.enabled')) {
-            return $this->submit();
+        if ($this->showRecaptchaForm()) {
+            return view('recaptcha', [
+                'request' => $data,
+            ]);
         }
 
-        // If there is a recaptcha response in the request verify it and if correct process the submission
-        if (request()->has('g-recaptcha-response')) {
-            $captcha_error = true;
-            $recaptcha = new ReCaptcha(config('formgate.recaptcha.secret_key'));
-            $response = $recaptcha->verify(request('g-recaptcha-response'), request()->getClientIp());
-            if ($response->isSuccess()) {
-                return $this->submit();
-            }
-        }
-
-        // If the recaptcha is enabled and it is not already in the request or it is invalid we show the recaptcha page
-        return view('recaptcha', [
-            'request' => $data,
-            'captcha_error' => $captcha_error ?? false,
-        ]);
+        return $this->submit();
     }
 
     /**
