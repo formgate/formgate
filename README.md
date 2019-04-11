@@ -45,7 +45,7 @@ Example form:
   <input type="email" name="_sender_email">
   <input type="text" name="_subject">
   <textarea name="Message"></textarea>
-  <input type="submit" value="Send">
+  <button type="submit">Send</button>
 </form>
 ```
 
