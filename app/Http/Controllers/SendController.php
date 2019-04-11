@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\FileUploadProcessor;
 use App\FormProcessor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
@@ -37,6 +38,7 @@ class SendController extends Controller
             '_hp_email',
             '_token',
             'g-recaptcha-response',
+            'file',
         ]);
     }
 
@@ -45,7 +47,25 @@ class SendController extends Controller
      */
     public function handle()
     {
-        abort_if(!empty(request('_hp_email')), 422); // Abort the request if there is a filled in _hp_email field
+        // Abort the request if there is a filled in _hp_email field
+        abort_if(!empty(request('_hp_email')), 422);
+
+        $data = request()->except('file');
+
+        // If the request has a field called file we assume it is
+        // the path to a stored file
+        if (request()->has('file')) {
+            $this->processor->setFile(request('file'));
+        }
+
+        // However if they have uploaded a file then we will store
+        // the file, restore the path & append it to the $data variable
+        // which is used in the recaptcha form
+        if (request()->hasFile('file')) {
+            $path = (new FileUploadProcessor(request('file')));
+            $this->processor->setFile($path);
+            $data['file'] = $path;
+        }
 
         // If recaptcha is disabled we can just offload to the submit method
         if (!config('formgate.recaptcha.enabled')) {
@@ -64,7 +84,7 @@ class SendController extends Controller
 
         // If the recaptcha is enabled and it is not already in the request or it is invalid we show the recaptcha page
         return view('recaptcha', [
-            'request' => request()->all(),
+            'request' => $data,
             'captcha_error' => $captcha_error ?? false,
         ]);
     }

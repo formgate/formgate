@@ -11,7 +11,7 @@
         </p>
     @endif
 
-    <form action="{{ url('send') }}" method="post">
+    <form action="{{ url('send') }}" method="post" enctype="multipart/form-data">
         @csrf
         @foreach($request as $key => $value)
             <input type="hidden" name="{{ $key }}" value="{{ $value }}">

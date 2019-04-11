@@ -2,14 +2,13 @@
 
 namespace App;
 
+use App\Mail\FormSubmissionMail;
 use Illuminate\Mail\Mailer;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class FormProcessor
 {
-    /**
-     * @var Mailer
-     */
-    private $mailer;
 
     /**
      * @var array
@@ -42,11 +41,15 @@ class FormProcessor
     private $fields;
 
     /**
+     * @var string
+     */
+    private $file = '';
+
+    /**
      * @param Mailer $mailer
      */
-    public function __construct(Mailer $mailer)
+    public function __construct()
     {
-        $this->mailer = $mailer;
         $this->recipient_allow_list = $this->getAllowList();
     }
 
@@ -65,7 +68,7 @@ class FormProcessor
      */
     public function setRecipient(string $recipient): void
     {
-        if (! in_array($recipient, $this->recipient_allow_list)) {
+        if (!in_array($recipient, $this->recipient_allow_list)) {
             throw new \InvalidArgumentException('The $recipient is not on the recipient allow list.');
         }
 
@@ -85,7 +88,7 @@ class FormProcessor
      */
     public function setSenderEmail(?string $sender_email): void
     {
-        if (! filter_var($sender_email, FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($sender_email, FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException('The $sender_email must be a valid email address.');
         }
 
@@ -109,21 +112,57 @@ class FormProcessor
     }
 
     /**
+     * @param string $path
+     */
+    public function setFile(string $path)
+    {
+        $this->file = $path;
+    }
+
+
+    /**
+     * @return string|null
+     */
+    public function getSubject(): ?string
+    {
+        return $this->subject;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSenderName(): ?string
+    {
+        return $this->sender_name ?: config('mail.from.name');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSenderEmail(): ?string
+    {
+        return $this->sender_email;
+    }
+
+    /**
      * @return string
      */
-    private function buildMessage(): string
+    public function getFile()
     {
-        // Add the sender name and email address to the fields providing they're not empty.
-        $fields = array_merge(array_filter([
-            'Sender Name' => $this->sender_name,
-            'Sender Email' => $this->sender_email,
-        ]), $this->fields);
+        return $this->file;
+    }
 
+
+    /**
+     * @return string
+     */
+    public function buildMessage(): string
+    {
         $message_fields = array_map(function ($value, $name) {
-            return $name.':'.PHP_EOL.$value;
-        }, $fields, array_keys($fields));
+            return $name . ':' . PHP_EOL . $value;
+        }, $this->fields, array_keys($this->fields));
 
-        return implode(PHP_EOL.PHP_EOL, $message_fields);
+        return implode(PHP_EOL . PHP_EOL, $message_fields);
     }
 
     /**
@@ -131,17 +170,12 @@ class FormProcessor
      */
     public function send(): void
     {
-        $from_name = $this->sender_name ?: config('mail.from.name');
+        Mail::to($this->recipient)->send(new FormSubmissionMail($this));
 
-        $this->mailer->raw($this->buildMessage(), function ($mail) use ($from_name) {
-            /** @var \Illuminate\Mail\Message $mail */
-            $mail->to($this->recipient);
-            $mail->from(config('mail.from.address'), $from_name);
-            $mail->subject($this->subject);
-
-            if ($this->sender_email) {
-                $mail->addReplyTo($this->sender_email, $this->sender_name);
-            }
-        });
+        // If there is a file in the processor and the email
+        // has sent we delete the file from storage
+        if (!empty($this->getFile())) {
+            Storage::disk('local')->delete($this->getFile());
+        }
     }
 }
