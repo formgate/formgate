@@ -170,8 +170,8 @@ class FormProcessor
 
         // If there is a file in the processor and the email
         // has sent we delete the file from storage
-        if (! empty($this->getFile())) {
-            Storage::disk('local')->delete($this->getFile());
+        if (! empty($this->file)) {
+            Storage::disk('local')->delete($this->file);
         }
     }
 }
