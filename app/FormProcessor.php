@@ -39,9 +39,9 @@ class FormProcessor
     private $fields;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $file = '';
+    private $file;
 
     /**
      * FormProcessor constructor.
@@ -110,9 +110,9 @@ class FormProcessor
     }
 
     /**
-     * @param string $path
+     * @param string|null $path
      */
-    public function setFile(string $path): void
+    public function setFile(?string $path): void
     {
         $this->file = $path;
     }
@@ -142,9 +142,9 @@ class FormProcessor
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFile(): string
+    public function getFile(): ?string
     {
         return $this->file;
     }

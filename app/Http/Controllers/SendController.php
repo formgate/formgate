@@ -69,23 +69,8 @@ class SendController extends Controller
         // Abort the request if there is a filled in _hp_email field
         abort_if(!empty(request('_hp_email')), 422);
 
-        $data = request()->except('file');
-
-        // If the request has a field called file we assume it is
-        // the path to a stored file
-        if (request()->has('file')) {
-            $data['file'] = request('file');
-            $this->processor->setFile(request('file'));
-        }
-
-        // However if they have uploaded a file then we will store
-        // the file, restore the path & append it to the $data variable
-        // which is used in the recaptcha form
-        if (request()->hasFile('file')) {
-            $path = $this->fileUpload(request('file'));
-            $this->processor->setFile($path);
-            $data['file'] = $path;
-        }
+        $data = request()->all();
+        $data['file'] = $this->getFilePath();
 
         if ($this->showRecaptchaPage()) {
             return view('recaptcha', [
@@ -113,23 +98,23 @@ class SendController extends Controller
         $this->processor->setRecipient(request('_recipient'));
         $this->processor->setSubject(request('_subject', 'Contact form submission'));
         $this->processor->setFields($this->getFields());
+        $this->processor->setFile($this->getFilePath());
         $this->processor->send();
 
         return redirect(request('_redirect_success', 'thanks'));
     }
 
-    private function fileUpload($file)
+    /**
+     * Get the path to a user uploaded file. This is either a file uploaded during
+     * the current request, or the path to a previously uploaded file.
+     * @return string|null
+     */
+    private function getFilePath(): ?string
     {
-        $data = [$file];
-        $validator = Validator::make($data, [
-            'file' => 'file',
-        ]);
-
-        if (!$validator->fails()) {
-            $file = request()->file('file');
-            $path = $file->store('');
+        if (request()->hasFile('file')) {
+            return request()->file('file')->store('');
         }
 
-        return $path ?? null;
+        return request('file');
     }
 }
