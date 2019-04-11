@@ -19,10 +19,10 @@ class FileUploadProcessor
         $data = [$file];
 
         $validator = Validator::make($data, [
-            'file' => 'file'
+            'file' => 'file',
         ]);
 
-        if (!$validator->fails()) {
+        if (! $validator->fails()) {
             $file = request()->file('file');
             $path = $file->store('');
         }
