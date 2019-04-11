@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\FormProcessor;
-use Illuminate\Http\RedirectResponse;
 use InvalidArgumentException;
 use ReCaptcha\ReCaptcha;
 
@@ -74,7 +73,7 @@ class SendController extends Controller
     }
 
     /**
-     * @return \Illuminate\View\View|RedirectResponse
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function handle()
     {
