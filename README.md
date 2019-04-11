@@ -62,7 +62,8 @@ It's early days for the project but in future we would like to add the following
 
 With various hosted solutions available, you might be wondering what the purpose of Formgate is. The project has the following benefits:
 
-* Free to use for any number of contact forms or submissions.
+* Free to use.
+* No limit on the number of forms, submissions or size of file uploads.
 * Complete control over your data and what jurisdiction it's processed in.
 * Can be installed quickly on a low cost shared hosting account to handle the contact forms for _all_ of your static websites.
 
