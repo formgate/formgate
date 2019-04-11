@@ -27,7 +27,7 @@ class FileUploadProcessor
     public function handle()
     {
         $validator = Validator::make($this->data, [
-            'file' => 'file'
+            'file' => 'file',
         ]);
 
         if (!$validator->fails()) {

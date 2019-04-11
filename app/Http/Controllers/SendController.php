@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\FileUploadProcessor;
 use App\FormProcessor;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
-use InvalidArgumentException;
 use ReCaptcha\ReCaptcha;
+use App\FileUploadProcessor;
+use InvalidArgumentException;
+use Illuminate\Routing\Redirector;
+use Illuminate\Http\RedirectResponse;
 
 class SendController extends Controller
 {
@@ -48,7 +48,7 @@ class SendController extends Controller
     public function handle()
     {
         // Abort the request if there is a filled in _hp_email field
-        abort_if(!empty(request('_hp_email')), 422);
+        abort_if(! empty(request('_hp_email')), 422);
 
         $data = request()->except('file');
 
@@ -69,7 +69,7 @@ class SendController extends Controller
         }
 
         // If recaptcha is disabled we can just offload to the submit method
-        if (!config('formgate.recaptcha.enabled')) {
+        if (! config('formgate.recaptcha.enabled')) {
             return $this->submit();
         }
 
