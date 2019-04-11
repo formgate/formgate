@@ -39,7 +39,7 @@ class FormSubmissionMail extends Mailable
         }
 
         // If there is a file in the FormProcessor object then we fetch it and attach it
-        if (! empty($this->processor->getFile())) {
+        if ($this->processor->getFile()) {
             $this->attachFromStorage($this->processor->getFile());
         }
 
