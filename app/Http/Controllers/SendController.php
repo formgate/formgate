@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\FormProcessor;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
 use InvalidArgumentException;
 use ReCaptcha\ReCaptcha;
 
@@ -61,31 +60,31 @@ class SendController extends Controller
     }
 
     /**
-     * @return RedirectResponse|Redirector
+     * @return \Illuminate\View\View
+     */
+    private function getRecaptchaResponse()
+    {
+        $data = request()->except(['_token', 'g-recaptcha-response']);
+        $data['file'] = $this->getFilePath();
+
+        return view('recaptcha', [
+            'request' => $data,
+            'failed' => request()->has('g-recaptcha-response'),
+        ]);
+    }
+
+    /**
+     * @return \Illuminate\View\View|RedirectResponse
      */
     public function handle()
     {
         // Abort the request if there is a filled in _hp_email field
         abort_if(!empty(request('_hp_email')), 422);
 
-        $data = request()->except(['_token', 'g-recaptcha-response']);
-        $data['file'] = $this->getFilePath();
-
         if ($this->showRecaptchaPage()) {
-            return view('recaptcha', [
-                'request' => $data,
-                'failed' => request()->has('g-recaptcha-response'),
-            ]);
+            return $this->getRecaptchaResponse();
         }
 
-        return $this->submit();
-    }
-
-    /**
-     * @return RedirectResponse|Redirector
-     */
-    private function submit()
-    {
         try {
             $this->processor->setSenderName(request('_sender_name'));
             $this->processor->setSenderEmail(request('_sender_email'));
