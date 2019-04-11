@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\FormProcessor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
-use Illuminate\Support\Facades\Validator;
 use InvalidArgumentException;
 use ReCaptcha\ReCaptcha;
 
