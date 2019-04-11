@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\FormProcessor;
-use App\ReCaptchaValidator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use InvalidArgumentException;
