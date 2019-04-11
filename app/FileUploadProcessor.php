@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Validator;
 class FileUploadProcessor
 {
     /**
+     * @var array
+     */
+    protected $data;
+
+    /**
      * FileUploadProcessor constructor.
      *
      * Upload the file, as long as it is a file
@@ -16,9 +21,12 @@ class FileUploadProcessor
      */
     public function __construct($file)
     {
-        $data = [$file];
+        $this->data = [$file];
+    }
 
-        $validator = Validator::make($data, [
+    public function handle()
+    {
+        $validator = Validator::make($this->data, [
             'file' => 'file'
         ]);
 

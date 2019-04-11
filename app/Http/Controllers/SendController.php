@@ -55,6 +55,7 @@ class SendController extends Controller
         // If the request has a field called file we assume it is
         // the path to a stored file
         if (request()->has('file')) {
+            $data['file'] = request('file');
             $this->processor->setFile(request('file'));
         }
 
@@ -62,7 +63,7 @@ class SendController extends Controller
         // the file, restore the path & append it to the $data variable
         // which is used in the recaptcha form
         if (request()->hasFile('file')) {
-            $path = (new FileUploadProcessor(request('file')));
+            $path = (new FileUploadProcessor(request('file')))->handle();
             $this->processor->setFile($path);
             $data['file'] = $path;
         }
