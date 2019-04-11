@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\FormProcessor;
-use ReCaptcha\ReCaptcha;
-use App\FileUploadProcessor;
-use InvalidArgumentException;
-use Illuminate\Routing\Redirector;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Validator;
+use InvalidArgumentException;
+use ReCaptcha\ReCaptcha;
 
 class SendController extends Controller
 {
@@ -48,7 +48,7 @@ class SendController extends Controller
     public function handle()
     {
         // Abort the request if there is a filled in _hp_email field
-        abort_if(! empty(request('_hp_email')), 422);
+        abort_if(!empty(request('_hp_email')), 422);
 
         $data = request()->except('file');
 
@@ -63,13 +63,13 @@ class SendController extends Controller
         // the file, restore the path & append it to the $data variable
         // which is used in the recaptcha form
         if (request()->hasFile('file')) {
-            $path = (new FileUploadProcessor(request('file')))->handle();
+            $path = $this->fileUpload(request('file'));
             $this->processor->setFile($path);
             $data['file'] = $path;
         }
 
         // If recaptcha is disabled we can just offload to the submit method
-        if (! config('formgate.recaptcha.enabled')) {
+        if (!config('formgate.recaptcha.enabled')) {
             return $this->submit();
         }
 
@@ -109,5 +109,20 @@ class SendController extends Controller
         $this->processor->send();
 
         return redirect(request('_redirect_success', 'thanks'));
+    }
+
+    private function fileUpload($file)
+    {
+        $data = [$file];
+        $validator = Validator::make($data, [
+            'file' => 'file',
+        ]);
+
+        if (!$validator->fails()) {
+            $file = request()->file('file');
+            $path = $file->store('');
+        }
+
+        return $path ?? null;
     }
 }
