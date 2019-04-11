@@ -45,7 +45,7 @@ class FormProcessor
     private $file = '';
 
     /**
-     * @param Mailer $mailer
+     * FormProcessor constructor.
      */
     public function __construct()
     {
