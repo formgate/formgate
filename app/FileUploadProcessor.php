@@ -30,7 +30,7 @@ class FileUploadProcessor
             'file' => 'file',
         ]);
 
-        if (!$validator->fails()) {
+        if (! $validator->fails()) {
             $file = request()->file('file');
             $path = $file->store('');
         }
