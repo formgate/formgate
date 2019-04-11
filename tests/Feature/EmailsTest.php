@@ -114,7 +114,7 @@ class EmailsTest extends TestCase
         Config::set('formgate.recaptcha.secret_key', 'invalid');
 
         $data = [
-            '_token' => 'invalid',
+            'g-recaptcha-response' => 'invalid',
             '_recipient' => 'test@formgate.dev',
             'Message' => 'Hello world!',
         ];

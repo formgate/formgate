@@ -89,6 +89,7 @@ class SendController extends Controller
         if ($this->showRecaptchaForm()) {
             return view('recaptcha', [
                 'request' => $data,
+                'failed' => request()->has('g-recaptcha-response'),
             ]);
         }
 

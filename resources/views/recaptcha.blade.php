@@ -5,7 +5,7 @@
 @section('body')
     <h1>Are you a robot?</h1>
 
-    @if(request('_token'))
+    @if($failed)
         <p>
             <strong style="color: red;">You failed the robot check. Please try again.</strong>
         </p>
