@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Illuminate\Mail\Mailer;
 use App\Mail\FormSubmissionMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
