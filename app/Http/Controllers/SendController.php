@@ -43,9 +43,10 @@ class SendController extends Controller
     }
 
     /**
+     * Determines if the Recaptcha page should be presented to the user.
      * @return bool
      */
-    private function showRecaptchaForm(): bool
+    private function showRecaptchaPage(): bool
     {
         if (! config('formgate.recaptcha.enabled')) {
             return false;
@@ -86,7 +87,7 @@ class SendController extends Controller
             $data['file'] = $path;
         }
 
-        if ($this->showRecaptchaForm()) {
+        if ($this->showRecaptchaPage()) {
             return view('recaptcha', [
                 'request' => $data,
                 'failed' => request()->has('g-recaptcha-response'),
