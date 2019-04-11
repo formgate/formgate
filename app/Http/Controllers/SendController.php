@@ -13,14 +13,14 @@ class SendController extends Controller
     /**
      * @var FormProcessor
      */
-    private $mailer;
+    private $processor;
 
     /**
-     * @param FormProcessor $mailer
+     * @param FormProcessor $processor
      */
-    public function __construct(FormProcessor $mailer)
+    public function __construct(FormProcessor $processor)
     {
-        $this->mailer = $mailer;
+        $this->processor = $processor;
     }
 
     /**
@@ -36,7 +36,7 @@ class SendController extends Controller
             '_redirect_success',
             '_hp_email',
             '_token',
-            'g-recaptcha-response'
+            'g-recaptcha-response',
         ]);
     }
 
@@ -63,7 +63,10 @@ class SendController extends Controller
         }
 
         // If the recaptcha is enabled and it is not already in the request or it is invalid we show the recaptcha page
-        return view('recaptcha', ['request' => request()->all(), 'captcha_error' => $captcha_error ?? false]);
+        return view('recaptcha', [
+            'request' => request()->all(),
+            'captcha_error' => $captcha_error ?? false,
+        ]);
     }
 
     /**
@@ -72,17 +75,17 @@ class SendController extends Controller
     private function submit()
     {
         try {
-            $this->mailer->setSenderName(request('_sender_name'));
-            $this->mailer->setSenderEmail(request('_sender_email'));
+            $this->processor->setSenderName(request('_sender_name'));
+            $this->processor->setSenderEmail(request('_sender_email'));
         } catch (InvalidArgumentException $e) {
             // For now, there's no way to handle end user errors but any data should still be submitted.
             // To ensure a valid sender email is set, use <input type="email"> in your form.
         }
 
-        $this->mailer->setRecipient(request('_recipient'));
-        $this->mailer->setSubject(request('_subject', 'Contact form submission'));
-        $this->mailer->setFields($this->getFields());
-        $this->mailer->send();
+        $this->processor->setRecipient(request('_recipient'));
+        $this->processor->setSubject(request('_subject', 'Contact form submission'));
+        $this->processor->setFields($this->getFields());
+        $this->processor->send();
 
         return redirect(request('_redirect_success', 'thanks'));
     }
