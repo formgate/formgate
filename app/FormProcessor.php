@@ -104,7 +104,7 @@ class FormProcessor
     /**
      * @param array $fields
      */
-    public function setFields(array $fields)
+    public function setFields(array $fields): void
     {
         $this->fields = $fields;
     }
@@ -112,7 +112,7 @@ class FormProcessor
     /**
      * @param string $path
      */
-    public function setFile(string $path)
+    public function setFile(string $path): void
     {
         $this->file = $path;
     }
@@ -144,7 +144,7 @@ class FormProcessor
     /**
      * @return string
      */
-    public function getFile()
+    public function getFile(): string
     {
         return $this->file;
     }
