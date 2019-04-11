@@ -68,7 +68,7 @@ class SendController extends Controller
         // Abort the request if there is a filled in _hp_email field
         abort_if(!empty(request('_hp_email')), 422);
 
-        $data = request()->all();
+        $data = request()->except(['_token', 'g-recaptcha-response']);
         $data['file'] = $this->getFilePath();
 
         if ($this->showRecaptchaPage()) {
