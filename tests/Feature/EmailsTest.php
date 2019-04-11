@@ -102,6 +102,8 @@ class EmailsTest extends TestCase
         $this->post('/send', $data)
             ->assertViewIs('recaptcha');
 
+        $data['g-recaptcha-response'] = 'invalid-response';
+
         $this->post('/send', $data)
             ->assertSee('You failed the robot check.');
 
