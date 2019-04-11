@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\FormProcessor;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
-use InvalidArgumentException;
 use ReCaptcha\ReCaptcha;
+use InvalidArgumentException;
+use Illuminate\Routing\Redirector;
+use Illuminate\Http\RedirectResponse;
 
 class SendController extends Controller
 {
@@ -36,7 +36,7 @@ class SendController extends Controller
             '_redirect_success',
             '_hp_email',
             '_token',
-            'g-recaptcha-response'
+            'g-recaptcha-response',
         ]);
     }
 
@@ -45,10 +45,10 @@ class SendController extends Controller
      */
     public function handle()
     {
-        abort_if(!empty(request('_hp_email')), 422); // Abort the request if there is a filled in _hp_email field
+        abort_if(! empty(request('_hp_email')), 422); // Abort the request if there is a filled in _hp_email field
 
         // If recaptcha is disabled we can just offload to the submit method
-        if (!config('formgate.recaptcha.enabled')) {
+        if (! config('formgate.recaptcha.enabled')) {
             return $this->submit();
         }
 
