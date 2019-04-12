@@ -31,7 +31,8 @@ class FormSubmissionMail extends Mailable
      */
     public function build()
     {
-        $this->from(config('mail.from.address'), $this->processor->getSenderName());
+        $from_name = $this->processor->getSenderName() ?: config('mail.from.name');
+        $this->from(config('mail.from.address'), $from_name);
         $this->subject($this->processor->getSubject());
 
         if ($this->processor->getSenderEmail()) {

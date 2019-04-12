@@ -66,7 +66,7 @@ class FormProcessor
      */
     public function setRecipient(string $recipient): void
     {
-        if (! in_array($recipient, $this->recipient_allow_list)) {
+        if (!in_array($recipient, $this->recipient_allow_list)) {
             throw new \InvalidArgumentException('The $recipient is not on the recipient allow list.');
         }
 
@@ -86,7 +86,7 @@ class FormProcessor
      */
     public function setSenderEmail(?string $sender_email): void
     {
-        if (! filter_var($sender_email, FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($sender_email, FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException('The $sender_email must be a valid email address.');
         }
 
@@ -130,7 +130,7 @@ class FormProcessor
      */
     public function getSenderName(): ?string
     {
-        return $this->sender_name ?: config('mail.from.name');
+        return $this->sender_name;
     }
 
     /**
@@ -155,10 +155,10 @@ class FormProcessor
     public function buildMessage(): string
     {
         $message_fields = array_map(function ($value, $name) {
-            return $name.':'.PHP_EOL.$value;
+            return $name . ':' . PHP_EOL . $value;
         }, $this->fields, array_keys($this->fields));
 
-        return implode(PHP_EOL.PHP_EOL, $message_fields);
+        return implode(PHP_EOL . PHP_EOL, $message_fields);
     }
 
     /**
@@ -170,7 +170,7 @@ class FormProcessor
 
         // If there is a file in the processor and the email
         // has sent we delete the file from storage
-        if (! empty($this->file)) {
+        if (!empty($this->file)) {
             Storage::disk('local')->delete($this->file);
         }
     }
