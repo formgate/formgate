@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 use Tests\TestCase;
@@ -71,9 +70,7 @@ class EmailsTest extends TestCase
         $data = ['_recipient' => 'test@formgate.dev', 'Message' => 'Hello world!'];
 
         // Setup test google recaptcha keys (these keys will always pass)
-        Config::set('formgate.recaptcha.enabled', 'true');
-        Config::set('formgate.recaptcha.site_key', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI');
-        Config::set('formgate.recaptcha.secret_key', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe');
+        $this->enable_recaptcha();
 
         $this->post('/send', $data)
             ->assertViewIs('recaptcha');
@@ -90,7 +87,7 @@ class EmailsTest extends TestCase
      */
     public function test_captcha_form_is_presented()
     {
-        Config::set('formgate.recaptcha.enabled', 'true');
+        $this->enable_recaptcha();
 
         $data = [
             '_recipient' => 'test@formgate.dev',
@@ -107,9 +104,7 @@ class EmailsTest extends TestCase
     public function test_invalid_captcha_shows_error()
     {
         // Setup test google recaptcha keys (these keys will always fail)
-        Config::set('formgate.recaptcha.enabled', 'true');
-        Config::set('formgate.recaptcha.site_key', 'invalid');
-        Config::set('formgate.recaptcha.secret_key', 'invalid');
+        $this->enable_recaptcha(false);
 
         $data = [
             'g-recaptcha-response' => 'invalid',
@@ -127,21 +122,15 @@ class EmailsTest extends TestCase
      */
     public function test_file_upload_works_with_captcha_enabled()
     {
-        Config::set('formgate.recaptcha.enabled', 'true');
-        Config::set('formgate.recaptcha.site_key', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI');
-        Config::set('formgate.recaptcha.secret_key', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe');
+        $this->enable_recaptcha();
         Storage::fake();
 
         $file = UploadedFile::fake()->image('image.jpg');
         $data = [
             '_recipient' => 'test@formgate.dev',
-            'file' => $file
+            'file' => $file,
+            'g-recaptcha-response' => 'valid-code'
         ];
-
-        $this->post('/send', $data)
-            ->assertViewIs('recaptcha');
-
-        $data['g-recaptcha-response'] = 'valid-code';
 
         $this->followingRedirects()
             ->post('/send', $data)
