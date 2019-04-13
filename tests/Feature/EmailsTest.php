@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 use Tests\TestCase;
 
@@ -118,5 +120,69 @@ class EmailsTest extends TestCase
         $this->post('/send', $data)->assertViewIs('recaptcha');
         $this->post('/send', $data)->assertSee('You failed the robot check.');
         $this->assertNoMailSent();
+    }
+
+    /**
+     * Test that file uploads work with captcha enabled
+     */
+    public function test_file_upload_works_with_captcha_enabled()
+    {
+        Config::set('formgate.recaptcha.enabled', 'true');
+        Config::set('formgate.recaptcha.site_key', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI');
+        Config::set('formgate.recaptcha.secret_key', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe');
+        Storage::fake();
+
+        $file = UploadedFile::fake()->image('image.jpg');
+        $data = [
+            '_recipient' => 'test@formgate.dev',
+            'file' => $file
+        ];
+
+        $this->post('/send', $data)
+            ->assertViewIs('recaptcha');
+
+        $data['g-recaptcha-response'] = 'valid-code';
+
+        $this->followingRedirects()
+            ->post('/send', $data)
+            ->assertViewIs('thanks');
+
+        $emailEntity = $this->getLastEmail()->getChildren()[0];
+
+        $header = $emailEntity
+            ->getHeaders()
+            ->get('content-disposition')
+            ->getFieldBody();
+        $filename = str_replace('attachment; filename=', '', $header);
+        $this->assertEquals($filename, $file->hashName());
+
+        $this->assertEquals($emailEntity->getBody(), $file->get());
+    }
+
+    /**
+     * Test that file uploads work when recaptcha is disabled.
+     */
+    public function test_file_upload_with_no_recaptcha()
+    {
+        Storage::fake();
+        $file = UploadedFile::fake()->image('image.jpg');
+
+        $this->followingRedirects()
+            ->post('/send', [
+                '_recipient' => 'test@formgate.dev',
+                'file' => $file
+            ])
+            ->assertViewIs('thanks');
+
+        $emailEntity = $this->getLastEmail()->getChildren()[0];
+
+        $header = $emailEntity
+            ->getHeaders()
+            ->get('content-disposition')
+            ->getFieldBody();
+        $filename = str_replace('attachment; filename=', '', $header);
+        $this->assertEquals($filename, $file->hashName());
+
+        $this->assertEquals($emailEntity->getBody(), $file->get());
     }
 }
