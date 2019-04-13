@@ -12,9 +12,8 @@ class EmailsTest extends TestCase
      * Test that a simple email is sent when a post request is made
      * to the /send url.
      *
-     * @return void
      */
-    public function test_simple_email_is_sent(): void
+    public function test_simple_email_is_sent()
     {
         $this->post('/send', ['_recipient' => 'test@formgate.dev', 'Message' => 'Hello world!'])
             ->assertRedirect('/thanks');
@@ -26,9 +25,8 @@ class EmailsTest extends TestCase
      * Test that an InvalidArgumentException is thrown and no email is sent
      * when an email not in the allowed env list is used.
      *
-     * @return void
      */
-    public function test_email_not_on_allowed_list_fails(): void
+    public function test_email_not_on_allowed_list_fails()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->withoutExceptionHandling()
@@ -41,9 +39,8 @@ class EmailsTest extends TestCase
      * overwritten with the config mail from address value and the email
      * sends successfully.
      *
-     * @return void
      */
-    public function test_invalid_sender_email_gets_overwritten(): void
+    public function test_invalid_sender_email_gets_overwritten()
     {
         $this->post('/send', ['_recipient' => 'test@formgate.dev', '_sender_email' => 'invalid email']);
         $this->assertMailSent();
@@ -56,9 +53,8 @@ class EmailsTest extends TestCase
      * Test that if a field name with `_hp_email` is filled in that the
      * form submission is discarded as spam.
      *
-     * @return void
      */
-    public function test_honeypot_field_filled_in_rejects_submission(): void
+    public function test_honeypot_field_filled_in_rejects_submission()
     {
         $this->post('/send', ['_hp_email' => 'test@formgate.dev'])
             ->assertStatus(422);
@@ -68,7 +64,7 @@ class EmailsTest extends TestCase
     /**
      * Test that a valid recaptcha response submits the form
      */
-    public function test_valid_captcha_submits_form(): void
+    public function test_valid_captcha_submits_form()
     {
         $data = ['_recipient' => 'test@formgate.dev', 'Message' => 'Hello world!'];
 
