@@ -41,6 +41,7 @@ class SendController extends Controller
 
     /**
      * Determines if the Recaptcha page should be presented to the user.
+     *
      * @return bool
      */
     private function showRecaptchaPage(): bool
@@ -104,6 +105,7 @@ class SendController extends Controller
     /**
      * Get the path to a user uploaded file. This is either a file uploaded during
      * the current request, or the path to a previously uploaded file.
+     *
      * @return string|null
      */
     private function getFilePath(): ?string
