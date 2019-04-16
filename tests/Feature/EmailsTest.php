@@ -128,7 +128,7 @@ class EmailsTest extends TestCase
         $file = UploadedFile::fake()->image('image.jpg');
         $data = [
             '_recipient' => 'test@formgate.dev',
-            'file' => $file,
+            '_file' => $file,
             'g-recaptcha-response' => 'valid-code'
         ];
 
@@ -159,7 +159,7 @@ class EmailsTest extends TestCase
         $this->followingRedirects()
             ->post('/send', [
                 '_recipient' => 'test@formgate.dev',
-                'file' => $file
+                '_file' => $file
             ])
             ->assertViewIs('thanks');
 

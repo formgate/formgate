@@ -26,17 +26,12 @@ class SendController extends Controller
      */
     private function getFields(): array
     {
-        return request()->except([
-            '_recipient',
-            '_sender_name',
-            '_sender_email',
-            '_subject',
-            '_redirect_success',
-            '_hp_email',
-            '_token',
-            'g-recaptcha-response',
-            'file',
-        ]);
+        return collect(request()->all())
+            ->reject(function ($val, $key) {
+                return substr($key, 0, 1) === '_';
+            })
+            ->except('g-recaptcha-response')
+            ->toArray();
     }
 
     /**
@@ -46,17 +41,17 @@ class SendController extends Controller
      */
     private function showRecaptchaPage(): bool
     {
-        if (! config('formgate.recaptcha.enabled')) {
+        if (!config('formgate.recaptcha.enabled')) {
             return false;
         }
 
-        if (! request('g-recaptcha-response')) {
+        if (!request('g-recaptcha-response')) {
             return true;
         }
 
         $recaptcha = new ReCaptcha(config('formgate.recaptcha.secret_key'));
         $response = $recaptcha->verify(request('g-recaptcha-response'), request()->getClientIp());
-        return ! $response->isSuccess();
+        return !$response->isSuccess();
     }
 
     /**
@@ -65,7 +60,7 @@ class SendController extends Controller
     private function getRecaptchaResponse()
     {
         $data = request()->except(['_token', 'g-recaptcha-response']);
-        $data['file'] = $this->getFilePath();
+        $data['_file'] = $this->getFilePath();
 
         return view('recaptcha', [
             'request' => $data,
@@ -110,10 +105,10 @@ class SendController extends Controller
      */
     private function getFilePath(): ?string
     {
-        if (request()->hasFile('file')) {
-            return request()->file('file')->store('');
+        if (request()->hasFile('_file')) {
+            return request()->file('_file')->store('');
         }
 
-        return request('file');
+        return request('_file');
     }
 }
